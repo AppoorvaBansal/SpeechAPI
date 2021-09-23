@@ -28,8 +28,8 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
-    public static final Integer RecordAudioRequestCode = 1;
-    private SpeechRecognizer speechRecognizer;
+
+
     private EditText editText;
     private ImageView iv_mic;
     private TextView tv_Speech_to_text;
@@ -48,7 +48,28 @@ public class MainActivity extends AppCompatActivity {
         tv_Speech_to_text = findViewById(R.id.txt1);
         editText = findViewById(R.id.text);
         iv_mic = findViewById(R.id.button);
-        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
+
+        textToSpeech = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int i) {
+
+                // if No error is found then only it will run
+                if(i!=TextToSpeech.ERROR){
+                    // To Choose language of speech
+                    textToSpeech.setLanguage(Locale.UK);
+                }
+            }
+        });
+
+        // Adding OnClickListener
+        btnspk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                textToSpeech.speak(editText.getText().toString(),TextToSpeech.QUEUE_FLUSH,null,"123");
+            }
+        });
+
+
 
 
 
@@ -66,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
 
                 try {
                     startActivityForResult(intent, REQUEST_CODE_SPEECH_INPUT);
+
                 }
                 catch (Exception e) {
                     Toast
@@ -76,114 +98,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-       /* final Intent speechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
 
-        // create an object textToSpeech and adding features into it
-        textToSpeech = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int i) {
-
-                // if No error is found then only it will run
-                if(i!=TextToSpeech.ERROR){
-                    // To Choose language of speech
-                    textToSpeech.setLanguage(Locale.UK);
-                }
-            }
-        });
-
-        btnspk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                   // textToSpeech.speak(editText.getText().toString(),TextToSpeech.QUEUE_FLUSH,null);
-                textToSpeech.speak(editText.getText().toString(),TextToSpeech.QUEUE_FLUSH,null,"123");
-
-            }
-        });
-
-
-
-
-        speechRecognizer.setRecognitionListener(new RecognitionListener() {
-            @Override
-            public void onReadyForSpeech(Bundle params) {
-
-            }
-
-            @Override
-            public void onBeginningOfSpeech() {
-                editText.setText("");
-                editText.setHint("Listening...");
-            }
-
-            @Override
-            public void onRmsChanged(float rmsdB) {
-
-            }
-
-            @Override
-            public void onBufferReceived(byte[] buffer) {
-
-            }
-
-            @Override
-            public void onEndOfSpeech() {
-
-            }
-
-            @Override
-            public void onError(int error) {
-
-            }
-
-            @Override
-            public void onResults(Bundle bundle) {
-                micButton.setImageResource(R.drawable.ic_mic_off);
-                ArrayList<String> data = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-                editText.setText(data.get(0));
-            }
-
-            @Override
-            public void onPartialResults(Bundle partialResults) {
-
-            }
-
-            @Override
-            public void onEvent(int eventType, Bundle params) {
-
-            }
-        });
-
-
-
-
-        micButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (motionEvent.getAction() == MotionEvent.ACTION_UP){
-                    speechRecognizer.stopListening();
-                }
-                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN){
-                    micButton.setImageResource(R.drawable.ic_mic);
-                    speechRecognizer.startListening(speechRecognizerIntent);
-                }
-                return false;
-            }
-        });
-*/
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        speechRecognizer.destroy();
+
     }
 
     private void checkPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.RECORD_AUDIO},RecordAudioRequestCode);
+            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.RECORD_AUDIO},REQUEST_CODE_SPEECH_INPUT);
         }
     }
 
@@ -200,12 +126,12 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    @Override
+   /* @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == RecordAudioRequestCode && grantResults.length > 0 ){
             if(grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 Toast.makeText(this,"Permission Granted",Toast.LENGTH_SHORT).show();
         }
-    }
+    }*/
 }
