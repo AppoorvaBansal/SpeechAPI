@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
+// speech to text
         iv_mic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
